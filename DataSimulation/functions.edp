@@ -96,9 +96,11 @@ func int SaveFarField(string DataFolderName, int setting)
         ofstream fileoutput(datafolderpath + setting + "/FF_Real.dat");
         fileoutput<< MSRRealinfty;
     } ;
-    {
+    {       
         ofstream fileoutput(datafolderpath + setting + "/Angles.dat");
-        fileoutput<< Angle;
+        for (int i = 0; i < Angle.n; ++i) {
+        fileoutput << Angle(i) << "\n";  // One value per line
+        } ;
     } ;
     return 0;
 }
