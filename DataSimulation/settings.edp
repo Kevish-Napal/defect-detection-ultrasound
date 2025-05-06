@@ -15,12 +15,76 @@ border disk3(t=0,2.*pi){x=0.75*cos(t);y=0.75*sin(t)-2.;label=medium;};
 border ff(t=0,2.*pi){x=5.*cos(t);y=5.*sin(t);label=far;};
 
 
-// Defects
+// Top right horizontal crack
 
 border crack1(t=-1,1){x=2+0.5*t; y=2-0.01; label=crack;};
 border crack2(t=0,1){x=2.5; y=2-0.01 + t*0.02; label=crack;};
 border crack3(t=-1,1){x=2-0.5*t; y=2+0.01; label=crack;};
 border crack4(t=0,1){x=1.5; y=2+0.01-0.02*t; label=crack;};
+
+
+// Top left horizontal crack
+
+border H1crack1(t=-1,1){x=-2+0.5*t; y=2-0.01; label=crack;};
+border H1crack2(t=0,1){x=-2+0.5; y=2-0.01 + t*0.02; label=crack;};
+border H1crack3(t=-1,1){x=-2-0.5*t; y=2+0.01; label=crack;};
+border H1crack4(t=0,1){x=-2-0.5; y=2+0.01-0.02*t; label=crack;};
+
+// bottom horizontal crack
+
+border H2crack1(t=-1,1){x=0.5*t; y=-2-0.01; label=crack;};
+border H2crack2(t=0,1){x=0.5; y=-2-0.01 + t*0.02; label=crack;};
+border H2crack3(t=-1,1){x=-0.5*t; y=-2+0.01; label=crack;};
+border H2crack4(t=0,1){x=-0.5; y=-2+0.01-0.02*t; label=crack;};
+
+// second bottom horizontal crack
+
+border H3crack1(t=-1,1){x=x=0.5*t; y=-0.1-2-0.01; label=crack;};
+border H3crack2(t=0,1){x=x=0.5; y=-0.1-2-0.01 + t*0.02; label=crack;};
+border H3crack3(t=-1,1){x=x=-0.5*t; y=-0.1-2+0.01; label=crack;};
+border H3crack4(t=0,1){x=-0.5; y=-0.1-2+0.01-0.02*t; label=crack;};
+
+// bottom horizontal crack mini
+
+border H2crack1mini(t=0,1){x=0.33*t -0.5; y=-2-0.01; label=crack;};
+border H2crack2mini(t=0,1){x=0.33-0.5; y=-2-0.01 + t*0.02; label=crack;};
+border H2crack3mini(t=1,0){x=0.33-0.5-0.33*t; y=-2+0.01; label=crack;};
+border H2crack4mini(t=0,1){x=-0.5; y=-2+0.01-0.02*t; label=crack;};
+
+// bottom horizontal crack medium
+
+border H2crack1medium(t=-1,1){x=0.75*t; y=-2-0.01; label=crack;};
+border H2crack2medium(t=0,1){x=0.75; y=-2-0.01 + t*0.02; label=crack;};
+border H2crack3medium(t=-1,1){x=-0.75*t; y=-2+0.01; label=crack;};
+border H2crack4medium(t=0,1){x=-0.75; y=-2+0.01-0.02*t; label=crack;};
+
+// sinusoidal crack
+real r=sqrt(2.)/2.;
+
+border S1crack1(t=0,0.0200){x=r*(0.0200-t)+1.75; y=r*(0.0200-t)+1.75; label=crack;};
+border S1crack2(t=0,pi){x=r*(0.13*cos(t+pi)+0.13 - 0.13*sin(t+pi))+1.75; y=r*(0.13*cos(t+pi)+0.13 + 0.13*sin(t+pi))+1.75; label=crack;};
+border S1crack3(t=0,pi){x=r*(0.11*cos(pi-t)+0.37 - 0.11*sin(pi-t))+1.75; y=r*(0.11*cos(pi-t)+0.37 + 0.11*sin(pi-t))+1.75; label=crack;};
+border S1crack4(t=0,0.02){x=r*(0.48+t)+1.75; y=r*(0.48+t)+1.75; label=crack;};
+border S1crack5(t=0,pi){x=r*(0.13*cos(t)+0.37 - 0.13*sin(t))+1.75; y=r*(0.13*cos(t)+0.37 + 0.13*sin(t))+1.75; label=crack;};
+border S1crack6(t=0.00,pi){x=r*(0.11*cos(-t)+0.13 - 0.11*sin(-t))+1.75; y=r*(0.11*cos(-t)+0.13 + 0.11*sin(-t))+1.75; label=crack;};
+
+// Void1
+real rV1=0.25;
+real xV1=2.2;
+real yV1 = 2.2;
+border V1(t=0,2.*pi){x=rV1*cos(t)+xV1;y=rV1*sin(t)+yV1;label=crack;};
+
+// Void2
+real rV2=0.25;
+real xV2=0.;
+real yV2 = -2.0;
+border V2(t=0,2.*pi){x=rV2*cos(t)+xV2;y=rV2*sin(t)+yV2;label=crack;};
+
+// miniVoid
+real rVm = 0.15;
+real xVm = 1.8;
+real yVm = 1.8;
+border Vm(t=0,2.*pi){x=rVm*cos(t)+xVm;y=rVm*sin(t)+yVm;label=crack;};
 
 
 // Number of sample points on the borders for building the mesh
@@ -30,15 +94,55 @@ int pext=2.*pi*Rext/lambda*nbmext;
 int pdisk=2.*pi*0.75/lambda*nbmext*1.5; // 2 should be length of the ellipse
 int pcrack= 1./lambda*nbmext*1.5;
 int pff=2.*pi*5./lambda*nbmext;
+int pcracksmall= .11*pi/lambda*nbmext*1.5;
+int pcrackbig= .13*pi/lambda*nbmext*1.5;
+int pvoid = 2.*pi*0.25/lambda*nbmext;
+int pvoidmini = 2.*pi*rVm/lambda*nbmext;
 
 mesh Th;
 
-if(setting==0){
+if(setting==1){ 
+    // One top right horizontal crack
+    Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff)+crack1(-pcrack)+crack2(0)+crack3(-pcrack)+crack4(0));
+
+
+} else if (setting==2) { 
+    // 1 top left crack and 1 bottom crack
+    Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff)+H1crack1(-pcrack)+H1crack2(0)+H1crack3(-pcrack)+H1crack4(0)+H2crack1(-pcrack)+H2crack2(0)+H2crack3(-pcrack)+H2crack4(0));
+
+
+} else if (setting==3) { 
+    // 1 top left crack, 1 bottom crack, and 1 top right sinusoidal crack
+    Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff)+H1crack1(-pcrack)+H1crack2(0)+H1crack3(-pcrack)+H1crack4(0)+H2crack1(-pcrack)+H2crack2(0)+H2crack3(-pcrack)+H2crack4(0) +S1crack1(0)+S1crack2(-pcrackbig)+S1crack3(-pcracksmall)+S1crack4(0)+S1crack5(-pcrackbig)+S1crack6(-pcracksmall) +H2crack1(-pcrack)+H2crack2(0)+H2crack3(-pcrack)+H2crack4(0));  
+
+
+} else if (setting==4) { 
+    // 1 top left horizontal, 1 top right curvy, 2 bottom horizontal 
+    Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff)+H1crack1(-pcrack)+H1crack2(0)+H1crack3(-pcrack)+H1crack4(0)+S1crack1(0)+S1crack2(-pcrackbig)+S1crack3(-pcracksmall)+S1crack4(0)+S1crack5(-pcrackbig)+S1crack6(-pcracksmall)+H2crack1(-pcrack)+H2crack2(0)+H2crack3(-pcrack)+H2crack4(0)+H3crack1(-pcrack)+H3crack2(0)+H3crack3(-pcrack)+H3crack4(0));
+
+
+} else if (setting==5) { 
+    // 1 top left horizontal, 1 bottom horizontal mini
+    Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff)+H1crack1(-pcrack)+H1crack2(0)+H1crack3(-pcrack)+H1crack4(0)
+    + H2crack1mini(-pcrack/3) +  H2crack2mini(0)+ H2crack3mini(pcrack/3) +  H2crack4mini(0));
+
+
+} else if (setting==6) { 
+    // 1 top right void
+    Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff)+V1(-pvoid));
+
+} else if (setting==7) { 
+    // 1 top right void, 1 bottom void
+    Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff)+V1(-pvoid)+V2(-pvoid));
+
+
+} else if (setting==8) { 
+    // 2 top right void (a bigger and a smaller)
+    Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff)+V1(-pvoid)+Vm(-pvoidmini));
+
+
+} else { // Material without defects
     Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff));
-} else if(setting==1){
-    Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff)+crack1(-pcrack)+crack2(0)+crack3(-pcrack)+crack4(0));
-} else {
-    Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff)+crack1(-pcrack)+crack2(0)+crack3(-pcrack)+crack4(0));
 }
 
 

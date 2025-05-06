@@ -1,8 +1,8 @@
 ////// Parameters ////////// 
-real lambda = 0.5;//0.5;
-int setting = 1;
+real lambda = 0.5;
+int setting = 8; // Choose between 0 (homogeneous) and 8
 int NSources=100; // Big N in the paper, number of sources and measurements
-bool PlotFlag = false;
+bool PlotFlag = true;
 
 real Rext= 6.; // size of computational domain
 real k=2.0*pi/lambda;
@@ -13,8 +13,8 @@ include "functions.edp"
 
 if (PlotFlag)
 {
-    plot(Th,wait=1,ps="mesh.msh");
-    plot(indice,fill=1,wait=1,ps="index.eps");
+    plot(Th,wait=1);
+    plot(indice,fill=1,wait=1);
 }
 
 
