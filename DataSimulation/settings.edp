@@ -1,0 +1,51 @@
+// Borders type (values are not important but should be different)
+
+int Radiacond = 6;
+int medium = 20;
+int crack = 99;
+int far = 10;
+
+
+// Domain of computation, the 3 Components, and disc for computing the farfield 
+
+border CercleExt(t=0,2.*pi){x=Rext*cos(t);y=Rext*sin(t);label=Radiacond;};
+border disk1(t=0,2.*pi){x=0.75*cos(t)-2.;y=0.75*sin(t)+2.;label=medium;};
+border disk2(t=0,2.*pi){x=0.75*cos(t)+2.;y=0.75*sin(t)+2.;label=medium;};
+border disk3(t=0,2.*pi){x=0.75*cos(t);y=0.75*sin(t)-2.;label=medium;};
+border ff(t=0,2.*pi){x=5.*cos(t);y=5.*sin(t);label=far;};
+
+
+// Defects
+
+border crack1(t=-1,1){x=2+0.5*t; y=2-0.01; label=crack;};
+border crack2(t=0,1){x=2.5; y=2-0.01 + t*0.02; label=crack;};
+border crack3(t=-1,1){x=2-0.5*t; y=2+0.01; label=crack;};
+border crack4(t=0,1){x=1.5; y=2+0.01-0.02*t; label=crack;};
+
+
+// Number of sample points on the borders for building the mesh
+
+int nbmext=10; // Nb of triangle of the mesh by wavelength
+int pext=2.*pi*Rext/lambda*nbmext;
+int pdisk=2.*pi*0.75/lambda*nbmext*1.5; // 2 should be length of the ellipse
+int pcrack= 1./lambda*nbmext*1.5;
+int pff=2.*pi*5./lambda*nbmext;
+
+mesh Th;
+
+if(setting==0){
+    Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff));
+} else if(setting==1){
+    Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff)+crack1(-pcrack)+crack2(0)+crack3(-pcrack)+crack4(0));
+} else {
+    Th = buildmesh(CercleExt(pext)+disk1(pdisk)+disk2(pdisk)+disk3(pdisk)+ff(pff)+crack1(-pcrack)+crack2(0)+crack3(-pcrack)+crack4(0));
+}
+
+
+// Regions of the mesh for late use
+int D1 =Th(-2.,2.).region;
+int D2 =Th(2.,2.3).region;
+int D3 =Th(0.,-2.).region;
+int ext = Th(0,5).region;
+
+

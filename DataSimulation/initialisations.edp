@@ -1,0 +1,37 @@
+// function spaces
+
+fespace FS0(Th,P0);
+fespace FS1(Th,P1);
+fespace FS2(Th,P2);
+
+
+// index function
+int extbis = Th(0,1.7).region;
+FS0 indice = (region==ext||region==extbis) + 1.5*(region==D1 || region==D2 || region==D3);
+
+
+// initializations 
+macro Grad(u) [dx(u),dy(u)]//
+matrix<complex> A,Atmp,  FF;
+FS2<complex> Usol, Usolconj, Usoltot ;//,affichage1;
+FS2<complex> F;
+FS2 UsoltotR;//R,UsolI,PhiR ;
+FS2<complex> phiinfty; //green function (radiation)
+FS2<complex> test;
+complex test2;
+
+
+real[int] Angle(NSources);
+Angle=0:(2*pi/NSources):2*pi;
+
+real[int, int] MSRRealinfty(NSources,NSources);  // pour sauvegarder la matrice de réponse
+real[int, int] MSRImaginfty(NSources,NSources); 
+
+varf FarField(u,v)= int1d(Th,10)([N.x,N.y]'*Grad(v)*u-[N.x,N.y]'*Grad(u)*v); //cf Colton Kress p.21 formule (2.14)
+
+//	varf FarField(u,v)= int1d(Th,10)((dx(v)*N.x+dy(v)*N.y)*u - (dx(u)*N.x+dy(u)*N.y)*v);
+FF=FarField(FS2,FS2);
+
+
+varf BiLi(u,v)= int2d(Th)(u*v*k^2*indice-Grad(u)'*Grad(v)); // bilinear form of helmholtz equation
+Atmp=BiLi(FS2,FS2);

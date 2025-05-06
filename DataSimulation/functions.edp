@@ -1,0 +1,104 @@
+//fonction de la base de fourier
+func complex expin(real x1,real x2, int n)
+{
+    real theta = atan2(x2,x1);
+    return (exp(1i*n*theta)/sqrt(2*pi*Rext));
+}
+    
+func matrix<complex> computeDtN(real k, real Rext)
+{
+    int nbfpro = 10; //k*Rext; 
+    cout<<"nombre de fonctions propres = " <<nbfpro<<endl;
+    
+    //matrice d'integration exp(intheta) contre les  elements finis sur le bord
+    complex[int,int] vDtN( FS2.ndof, 2*nbfpro+1);
+    matrix<complex> DtN;
+
+    for (int n=-nbfpro;n<nbfpro+1;n++)
+    {
+        func f= expin(x,y,n);
+        varf FiniFourier(uu,vv) = int1d(Th,Radiacond)(vv*f);       
+        complex[int] temp = FiniFourier(0,FS2);          
+        vDtN(:,n+nbfpro)=temp;
+    }
+    DtN=vDtN;
+
+
+    // Construction de la matrice diagonale pour construire les EFL
+    matrix<complex> D;
+    complex[int] diagofD(2*nbfpro+1);
+    complex hnr,hn0,hn1,hnp;
+
+    hn0=j0(k*Rext)+1i*y0(k*Rext);
+    //hn1=j1(k*Rext)+1i*y1(k*Rext); // Origine
+    hn1=-(j1(k*Rext)+1i*y1(k*Rext)); // Corrigée
+    diagofD[nbfpro] = k*hn1/hn0;
+
+
+    for (int n =1;n<nbfpro;n++)
+    {
+        hnr =jn(n,k*Rext)+1.i*yn(n,k*Rext);
+        //hnp = -n*hnr/(k*Rext) + jn(n+1,k*Rext)+1.i*yn(n+1,k*Rext);// Origine
+        hnp = n*hnr/(k*Rext) - (jn(n+1,k*Rext)+1.i*yn(n+1,k*Rext));// Corrigée
+        diagofD[nbfpro+n] = k*hnp/hnr;
+        diagofD[nbfpro-n] = k*hnp/hnr;
+    }
+    D = [diagofD];
+
+
+    // Assemblage final et réorganisation pour pouvoir l'integrer a la formulation variationnelle
+    matrix<complex> EFL ;
+    EFL = DtN*D;
+    EFL= EFL*DtN';
+    return EFL;
+}
+
+
+func int UpdateScatteredField(real angle)
+{
+    func PhiinftySource = exp(1.i * k * (cos(angle)*x + sin(angle)*y));
+    varf TermeSource(u,v)=int2d(Th)(k^2*(1.0-(indice))*PhiinftySource*v);
+    F[]=TermeSource(0,FS2);
+
+    Usol[]=A^-1*F[]; // solve for u^s in the paper
+    return 0;
+}
+
+func int ComputeFarField(int incidence)
+{
+    for (int observation=0;observation<NSources;observation++)
+        {
+            func PhiinftyRecepteur=exp(-1.i*k*(cos(Angle(observation))*x+sin(Angle(observation))*y));
+            phiinfty=PhiinftyRecepteur;
+        
+            test[]=FF*phiinfty[];
+        
+            Usolconj[]=conj(Usol[]);
+            test2=Usolconj[]'*test[];  //car on a fait la conjugaison plus haut
+            
+            MSRRealinfty(observation,incidence)=real(test2);
+            MSRImaginfty(observation,incidence)=imag(test2);
+        
+        }
+    return 0;
+}
+
+func int SaveFarField(string DataFolderName, int setting)
+{
+    string datafolderpath = "../" + DataFolderName + "/";
+    exec("mkdir -p " + datafolderpath); // create data folder if it does not exist
+    exec("mkdir -p " + datafolderpath + setting); 
+    {
+        ofstream fileoutput(datafolderpath + setting + "/FF_Image.dat"); 
+        fileoutput<< MSRImaginfty;
+    } ;
+    {
+        ofstream fileoutput(datafolderpath + setting + "/FF_Real.dat");
+        fileoutput<< MSRRealinfty;
+    } ;
+    {
+        ofstream fileoutput(datafolderpath + setting + "/Angles.dat");
+        fileoutput<< Angle;
+    } ;
+    return 0;
+}
